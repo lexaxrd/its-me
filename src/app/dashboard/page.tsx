@@ -8,6 +8,7 @@ import { FiUsers } from "react-icons/fi";
 import { FaEnvelope } from "react-icons/fa6";
 import { BsFillInfoSquareFill } from "react-icons/bs";
 import { TbInfoTriangleFilled } from "react-icons/tb";
+import Footer from "../home/components/Footer";
 type DashboardUser = {
     username: string,
     user_id: string,
@@ -84,6 +85,7 @@ export default function Dashboard() {
                 </div>
 
             </div>
+            <Footer />
         </div>
     )
 }
