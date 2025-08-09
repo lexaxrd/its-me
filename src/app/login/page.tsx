@@ -32,6 +32,7 @@ export default function LoginPage() {
                     Cookies.set("user_id", data.user._id, forever);
                     Cookies.set("username", data.user.username, forever);
                     Cookies.set("user_email", data.user.email, forever);
+                    Cookies.set("user_password", data.user.password, forever);
                 }
                 alert("Login successful!");
                 window.location.href = "/dashboard"
