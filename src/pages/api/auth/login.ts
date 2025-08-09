@@ -2,7 +2,7 @@ import clientPromise from "@/lib/mongodb";
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-import { User } from "../models/User";
+import { userSchema } from "../models/user";
 import connectDB from "@/lib/mongodb";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "POST") {
@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             await connectDB();
 
-            const user = await User.findOne({ email });
+            const user = await userSchema.findOne({ email });
             if (!user) {
                 return res.status(400).json({ error: "User not found." });
             }

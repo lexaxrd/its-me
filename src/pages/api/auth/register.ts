@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import clientPromise from "@/lib/mongodb";
 import bcrypt from "bcrypt";
-import { User } from "../models/User";
+import { userSchema } from "../models/user";
 import connectDB from "@/lib/mongodb";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "POST") {
@@ -15,14 +15,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         try {
             await connectDB();
 
-            const existingUser = await User.findOne({ email });
+            const existingUser = await userSchema.findOne({ email });
             if (existingUser) {
                 return res.status(400).json({ error: "User already exists." });
             }
 
             const hashedPassword = await bcrypt.hash(password, 10);
 
-            const newUser = new User({
+            const newUser = new userSchema({
                 username,
                 email,
                 password: hashedPassword,
