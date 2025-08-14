@@ -36,7 +36,7 @@ export default function FeatureBar({ title, description, imageUrl, items, index 
     );
 
     return (
-        <div className="flex rounded-lg p-12 gap-10 bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] border border-[rgba(0,0,0,0.14)]">
+        <div className="flex rounded-2xl p-12 gap-10 bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] border border-[rgba(0,0,0,0.14)]">
             {isOdd ? (
                 <>
                     {imageContent}
