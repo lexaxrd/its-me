@@ -12,14 +12,14 @@ export default function UserButton() {
     const [username, serUsername] = useState<string | null>(null);
 
     const dropdownButtons = [
-        { 
+        {
             text: "Dashboard",
             icon: <MdSpaceDashboard />,
             function: () => {
                 window.location.href = "/dashboard"
             },
         },
-        { 
+        {
             text: "Log out",
             icon: <IoMdExit />,
             function: () => {
@@ -43,47 +43,38 @@ export default function UserButton() {
 
     if (username) {
         return (
-            <div className="relative min-w-[150px]">
+            <div className="relative min-w-[150px] z-50">
                 <button onClick={() => setOpenMenu(!openMenu)} className={`bg-[#f3f3f3] rounded-full text-black px-5 py-2 font-medium w-full cursor-pointer flex items-center justify-between gap-3 transition duration-200 border ${openMenu ? "border-black" : "border-transparent"}`}>
                     <div>
                         <img src="/itsmelogo.png" alt="" className="w-[25px]" />
-
                     </div>
                     <div className="flex gap-2 items-center">
-                        <p className="">
-                            {username}
-                        </p>
+                        <p>{username}</p>
                         <IoIosArrowDown className="" />
                     </div>
-
                 </button>
-                {openMenu && (
 
-                    <div className=" absolute top-14 bg-[#f3f3f3] w-full rounded-xl">
+                {openMenu && (
+                    <div className="absolute top-full left-0 mt-2 bg-[#f3f3f3] w-max min-w-[150px] rounded-xl shadow-lg z-50">
                         <span
-                            className="absolute top-[-7px] left-5 w-0 h-0 
-      border-l-8 border-l-transparent 
-      border-r-8 border-r-transparent 
-      border-b-8 border-b-[#f3f3f3] 
-      z-20 transition-all duration-200"
-                            style={{ content: '""' }}
+                            className="absolute -top-2 left-5 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-b-8 border-b-[#f3f3f3]"
                         />
-                        <div className="p-2">
+                        <div className="p-2 flex flex-col gap-1">
                             {dropdownButtons.map((btn, index) => (
-                                <a
+                                <button
                                     key={index}
                                     onClick={() => btn.function()}
-                                    className="flex items-center gap-2 px-2 py-2 hover:bg-[#FFFFFF] rounded-lg transition-colors duration-150 text-lg cursor-pointer"
+                                    className="flex items-center gap-2 px-3 py-2 hover:bg-[#FFFFFF] rounded-lg transition-colors duration-150 text-lg cursor-pointer w-full text-left"
                                 >
                                     {btn.icon}
                                     <span>{btn.text}</span>
-                                </a>
+                                </button>
                             ))}
                         </div>
                     </div>
                 )}
-
             </div>
+
         );
     }
     return (

@@ -15,7 +15,7 @@ export default function FeatureBar({ title, description, imageUrl, items, index 
     const isOdd = typeof index === 'number' && index % 2 === 1;
 
     const featureContent = (
-        <div className="w-[50%] h-full flex flex-col gap-8">
+        <div className="w-[50%] max-md:w-full h-full flex flex-col gap-8">
             <h1 className="font-bold text-4xl"> {title} </h1>
             <p className="text-xl"> {description} </p>
             <ul className="flex flex-col gap-1">
@@ -30,13 +30,13 @@ export default function FeatureBar({ title, description, imageUrl, items, index 
     );
 
     const imageContent = (
-        <div className="w-[50%] h-full">
+        <div className="w-[50%] max-md:w-full h-full">
             <img src={`/featuresImages/${imageUrl}`} alt="" className="w-full h-full rounded-lg" />
         </div>
     );
 
     return (
-        <div className="flex rounded-2xl p-12 gap-10 bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] border border-[rgba(0,0,0,0.14)]">
+        <div className="flex max-md:flex-col rounded-2xl p-12 gap-10 bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] border border-[rgba(0,0,0,0.14)] items-center">
             {isOdd ? (
                 <>
                     {imageContent}

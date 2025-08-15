@@ -1,20 +1,14 @@
 import ColorPicker from "@/app/components/Elements/ColorPicker";
-import { useState } from "react";
+import { Profile, ProfileComponent } from "@/pages/api/models/user";
+import { useEffect, useState } from "react";
 import { FaBorderAll, FaFont, FaKeyboard, FaLine, FaLink } from "react-icons/fa6";
 import { IoMdColorPalette } from "react-icons/io";
 import { MdOutlineFormatSize } from "react-icons/md";
-
+import Cookies from "js-cookie";
 type props = {
     componentType: string;
-    onAdd: (data: {
-        username: string;
-        fontType?: string;
-        fontSize?: number;
-        backgroundColor: string;
-        innerColor: string;
-        borderStyle: string;
-        componentType: string;
-    }) => void
+    editingProfile: Profile;
+    component: ProfileComponent;
 }
 const borderStyles = ["Square", "Soft Edges"];
 const fonts = [
@@ -27,7 +21,7 @@ const fonts = [
 ];
 
 
-export default function TextComponent({ onAdd, componentType }: props) {
+export default function TextComponent({ componentType, component, editingProfile }: props) {
     const [username, setUsername] = useState("");
     const [fontSize, setFontSize] = useState(15);
     const [backgroundColor, setBackgroundColor] = useState("#0f3057");
@@ -36,29 +30,66 @@ export default function TextComponent({ onAdd, componentType }: props) {
 
     const [selectedFont, setSelectedFont] = useState(fonts[0].class);
 
-    function handleSubmit() {
+    async function updateComponent() {
+        const email = Cookies.get("user_email");
+        const password = Cookies.get("user_password");
+        if (!email || !password) return;
 
-        onAdd({
-            username: username,
-            fontSize: fontSize,
-            fontType: selectedFont,
-            backgroundColor: backgroundColor,
-            innerColor: innerColor,
-            borderStyle: borderStyle,
-            componentType: componentType
-        });
+        try {
+            const res = await fetch("/api/profile/components/updateComponent", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    password,
+                    profileId: editingProfile._id,
+                    type: "normal",
+                    componentId: component.id,
+                    updateData: {
+                        backgroundColor,
+                        innerColor,
+                        fontType: selectedFont,
+                        text: username,
+                        fontSize: fontSize,
+                        borderStyle: borderStyle
+                    }
+                })
+            })
 
+            const data = await res.json();
+            if (!res.ok) {
+                return { status: "error", message: data.error || "Creation failed" };
+            }
+            else {
+                if (data.status === "error") return;
+                alert("Component updated successfully!")
+                window.location.href = "/dashboard/edit-profile/" + editingProfile.profileUrl
+            }
+        }
+        catch (e) {
+            return { status: "error", message: "An error occurred during fetch: " + e };
+        }
     }
 
+
+    useEffect(() => {
+        setUsername(component.text);
+        setSelectedFont(component.fontType);
+        setBorderStyle(component.borderStyle);
+        setFontSize(component.fontSize);
+        setBackgroundColor(component.backgroundColor);
+        setInnerColor(component.innerColor)
+    }, []);
     return (
         <div className="flex flex-col gap-6 w-md max-w-md mx-auto">
 
-            
+
 
             {componentType == "link" ? (
                 <div className="flex flex-col gap-2 w-full">
-                    <span className="flex gap-2 items-center text-xl"> <FaLink className="text-2xl" /> Link </span>
-
+                    <span className="flex gap-2 items-center text-xl">
+                        <FaLink className="text-2xl" /> Link
+                    </span>
                     <input
                         type="text"
                         value={username}
@@ -68,10 +99,25 @@ export default function TextComponent({ onAdd, componentType }: props) {
                         className="focus:shadow-[0_0_0px_3px_rgba(66,108,245,0.25)] w-full border border-black/30 rounded p-2 outline-none"
                     />
                 </div>
+            ) : componentType == "title" ? (
+                <div className="flex flex-col gap-2 w-full">
+                    <span className="flex gap-2 items-center text-xl">
+                        <FaFont className="text-2xl" /> Title
+                    </span>
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Enter title"
+                        required
+                        className="focus:shadow-[0_0_0px_3px_rgba(66,108,245,0.25)] w-full border border-black/30 rounded p-2 outline-none"
+                    />
+                </div>
             ) : (
                 <div className="flex flex-col gap-2 w-full">
-                    <span className="flex gap-2 items-center text-xl"> <FaKeyboard className="text-2xl" /> Text </span>
-
+                    <span className="flex gap-2 items-center text-xl">
+                        <FaKeyboard className="text-2xl" /> Profile Name
+                    </span>
                     <input
                         type="text"
                         value={username}
@@ -82,6 +128,7 @@ export default function TextComponent({ onAdd, componentType }: props) {
                     />
                 </div>
             )}
+
 
             <div>
                 <span className="flex gap-2 items-center text-xl"> <IoMdColorPalette className="text-2xl" /> Background Color </span>
@@ -129,7 +176,7 @@ export default function TextComponent({ onAdd, componentType }: props) {
             </div>
 
             <button
-                onClick={handleSubmit}
+                onClick={updateComponent}
                 className="transition duration-200 bg-blue-600 text-white p-3 rounded-lg cursor-pointer hover:bg-blue-700"
             >
                 Update

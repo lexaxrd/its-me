@@ -150,25 +150,22 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <div className="">
+        <div className="min-h-screen flex flex-col gap-28">
+            {/* --- Modal --- */}
             <div className={`fixed left-0 top-0 z-10 w-full min-h-full backdrop-blur-xs bg-black/50 transition duration-300 ${openMenu ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
                 }`}>
-                <div className="bg-[#FFFFFF] w-[450px] rounded-2xl p-8 border border-[rgba(0,0,0,0.3)] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col gap-3">
+                <div className="bg-white w-full max-w-md mx-auto rounded-2xl p-6 md:p-8 border border-[rgba(0,0,0,0.3)] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col gap-3">
                     <div className="flex justify-between items-center">
                         <h1 className="font-bold text-xl">Create a new profile</h1>
                         <IoClose onClick={() => setOpenMenu(false)} className="text-2xl cursor-pointer transition duration-500 hover:rotate-[360deg] hover:text-gray-500" />
                     </div>
                     <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-1">
-                            <p className="">
-                                Profile Name
-                            </p>
+                            <p>Profile Name</p>
                             <input onChange={(e) => setNewProfileName(e.target.value)} type="text" className="p-2 rounded-lg bg-[#F9F9F9] outline-none border border-[rgba(0,0,0,0.14)] focus:border-blue-500" />
                         </div>
                         <div className="flex flex-col gap-1 w-full">
-                            <p className="">
-                                Url Name
-                            </p>
+                            <p>Url Name</p>
                             <div className="flex w-full">
                                 <div className="text-center p-2 min-h-max bg-[#F9F9F9] border border-[rgba(0,0,0,0.14)] text-black/60">
                                     {origin}/
@@ -183,87 +180,83 @@ export default function Dashboard() {
                     )}
                 </div>
             </div>
-            <div className="flex flex-col gap-28">
-                <Navbar />
-                <div className="container flex flex-col gap-8">
-                    <div className="flex flex-col gap-1">
-                        <h1 className="text-5xl font-black text-[#424242]">Welcome to the Dashboard, {user?.username || ""}! 👋</h1>
-                        <p className="text-2xl">The dashboard allows you to create new profiles and view your statistics.</p>
-                    </div>
-                    <div className="flex flex-col gap-6">
-                        <div className="grid grid-cols-3 gap-5">
-                            <div className="border border-[rgba(0,0,0,0.14)] bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] flex items-center gap-4 rounded-lg p-6 py-9">
 
-                                <ImStatsDots className="text-6xl" />
-                                <div>
-                                    <p className="text-2xl">Total Views</p>
-                                    <p className="font-bold text-5xl">{totalViews}</p>
-                                </div>
-                            </div>
-                            <div className="border border-[rgba(0,0,0,0.14)] bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] flex items-center gap-4 rounded-lg p-6 py-9">
+            <Navbar />
 
-                                <FiUsers className="text-6xl" />
-                                <div>
-                                    <p className="text-2xl">Total Profiles</p>
-                                    <p className="font-bold text-5xl">{totalProfiles}</p>
-                                </div>
-                            </div>
-                            <div className="border border-[rgba(0,0,0,0.14)] bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] flex items-center gap-4 rounded-lg p-6 py-9">
-
-                                <HiCursorClick className="text-6xl" />
-                                <div>
-                                    <p className="text-2xl">Total Link Clicks</p>
-                                    <p className="font-bold text-5xl">{totalLinkClicks}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col gap-3 mt-20">
-                        <div className="flex gap-7 items-center">
-                            <p className="text-xl min-w-max"> My Profiles </p>
-                            <div className="w-full h-[3px] bg-gradient-to-r from-[#000000] to-transparent"></div>
-                            <button onClick={() => setOpenMenu(!openMenu)} className="min-w-max bg-blue-600 rounded-lg text-white p-2 px-6 cursor-pointer hover:bg-blue-700 transition duration-300"> New Profile </button>
-                        </div>
-                        <div>
-                            {profiles.length === 0 ? (
-                                <p className="font-medium text-xl">Profile not found. You can easily create your profile by clicking New Profile button.</p>
-                            ) : (
-                                <div className="flex flex-col gap-3">
-                                    {profiles.map((profile, index) => (
-                                        <div key={profile._id} className="p-4 py-6 border border-[rgba(0,0,0,0.14)] bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] rounded-lg flex justify-between items-center ">
-                                            <div className="flex items-center gap-8">
-                                                <div>
-                                                    <img src="/itsmelogo.png" alt="" width={50} />
-                                                </div>
-                                                <div>
-                                                    <div className="flex items-end gap-1">
-                                                        <h2 className="text-xl"><span className="font-bold">{profile.profileName}</span> Profile</h2>
-                                                        <p>({profile.views} {profile.views > 1 ? "views" : "view"})</p>
-                                                    </div>
-                                                    <p> Creation date: {profile.createdAt} </p>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-4xl">
-                                                <a href={`/dashboard/edit-profile/${profile.profileUrl}`} className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition duration-500">
-                                                    <MdEdit />
-                                                </a>
-                                                <a className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition duration-500 ">
-                                                    <FaLink />
-                                                </a>
-                                                <a onClick={() => handleDeleteProfile(profile._id)} className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition ">
-                                                    <MdDelete />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
+            {/* --- Statistics Section --- */}
+            <div className="container mx-auto px-4 py-8 flex flex-col gap-8">
+                <div className="flex flex-col gap-2">
+                    <h1 className="text-4xl md:text-5xl font-black text-[#424242]">Welcome to the Dashboard, {user?.username || ""}! 👋</h1>
+                    <p className="text-lg md:text-2xl">The dashboard allows you to create new profiles and view your statistics.</p>
                 </div>
-                <Footer />
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                    <div className="border border-[rgba(0,0,0,0.14)] bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] flex items-center gap-4 rounded-lg p-6">
+                        <ImStatsDots className="text-5xl md:text-6xl" />
+                        <div>
+                            <p className="text-lg md:text-2xl">Total Views</p>
+                            <p className="font-bold text-3xl md:text-5xl">{totalViews}</p>
+                        </div>
+                    </div>
+                    <div className="border border-[rgba(0,0,0,0.14)] bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] flex items-center gap-4 rounded-lg p-6">
+                        <FiUsers className="text-5xl md:text-6xl" />
+                        <div>
+                            <p className="text-lg md:text-2xl">Total Profiles</p>
+                            <p className="font-bold text-3xl md:text-5xl">{totalProfiles}</p>
+                        </div>
+                    </div>
+                    <div className="border border-[rgba(0,0,0,0.14)] bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] flex items-center gap-4 rounded-lg p-6">
+                        <HiCursorClick className="text-5xl md:text-6xl" />
+                        <div>
+                            <p className="text-lg md:text-2xl">Total Link Clicks</p>
+                            <p className="font-bold text-3xl md:text-5xl">{totalLinkClicks}</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* --- Profiles Section --- */}
+                <div className="flex flex-col gap-3 mt-10">
+                    <div className="flex flex-row  gap-4 items-center">
+                        <p className="text-xl font-semibold">My Profiles</p>
+                        <div className="flex-1 h-[3px] bg-gradient-to-r from-black to-transparent"></div>
+                        <button onClick={() => setOpenMenu(!openMenu)} className="bg-blue-600 rounded-lg text-white p-2 px-6 cursor-pointer hover:bg-blue-700 transition duration-300">New Profile</button>
+                    </div>
+
+                    {profiles.length === 0 ? (
+                        <p className="font-medium text-lg md:text-xl mt-3">Profile not found. You can easily create your profile by clicking New Profile button.</p>
+                    ) : (
+                        <div className="flex flex-col gap-3 mt-3">
+                            {profiles.map((profile) => (
+                                <div key={profile._id} className="p-4 py-6 border border-[rgba(0,0,0,0.14)] bg-gradient-to-r from-[#F9F9F9] to-[#FFFFFF] rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div className="flex items-center gap-4">
+                                        <img src="/itsmelogo.png" alt="" className="w-12 h-12 md:w-14 md:h-14" />
+                                        <div>
+                                            <div className="flex flex-col md:flex-row md:items-end gap-1">
+                                                <h2 className="text-lg md:text-xl"><span className="font-bold">{profile.profileName}</span> Profile</h2>
+                                                <p className="text-sm md:text-base">({profile.views} {profile.views > 1 ? "views" : "view"})</p>
+                                            </div>
+                                            <p className="text-sm md:text-base">Creation date: {new Date(profile.createdAt).toLocaleDateString()}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-3xl md:text-4xl mt-3 md:mt-0">
+                                        <a href={`/dashboard/edit-profile/${profile.profileUrl}`} className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition duration-500">
+                                            <MdEdit />
+                                        </a>
+                                        <a className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition duration-500">
+                                            <FaLink />
+                                        </a>
+                                        <a onClick={() => handleDeleteProfile(profile._id)} className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition ">
+                                            <MdDelete />
+                                        </a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
+
+            <Footer />
         </div>
     )
 }

@@ -12,6 +12,23 @@ export default function ColorPicker({ color = "#3498db", onChange }: ColorPicker
     const [hex, setHex] = useState<string>(normalizeToHex(color));
     const [alpha, setAlpha] = useState<number>(1);
     const [open, setOpen] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (!color) return;
+        const rgbaMatch = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/);
+        if (rgbaMatch) {
+            const r = Number(rgbaMatch[1]).toString(16).padStart(2, "0");
+            const g = Number(rgbaMatch[2]).toString(16).padStart(2, "0");
+            const b = Number(rgbaMatch[3]).toString(16).padStart(2, "0");
+            setHex(`#${r}${g}${b}`);
+            setAlpha(rgbaMatch[4] ? Number(rgbaMatch[4]) : 1);
+        } else {
+            setHex(normalizeToHex(color));
+            setAlpha(1);
+        }
+    }, [color]);
+
+
     const pickerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -114,11 +131,13 @@ export default function ColorPicker({ color = "#3498db", onChange }: ColorPicker
                                 max={1}
                                 step={0.01}
                                 value={alpha}
-                                onChange={e => setAlpha(Number(e.target.value))}
-                                style={{
-                                    width: "100%",
-                                    accentColor: "black"
+                                onChange={e => {
+                                    const newAlpha = Number(e.target.value);
+                                    setAlpha(newAlpha);
+                                    const rgbaColor = rgbaFromHex(hex, newAlpha);
+                                    onChange?.(newAlpha >= 1 ? hex : rgbaColor);
                                 }}
+                                style={{ width: "100%", accentColor: "black" }}
                             />
                         </div>
                     </div>

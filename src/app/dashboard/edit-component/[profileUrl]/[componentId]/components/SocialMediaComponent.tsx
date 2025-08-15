@@ -1,54 +1,93 @@
+"use client"
 import ColorPicker from "@/app/components/Elements/ColorPicker";
-import { useState } from "react";
+import { Profile, ProfileComponent } from "@/pages/api/models/user";
+import { useEffect, useState } from "react";
 import { FaBorderAll } from "react-icons/fa6";
 import { IoMdColorPalette } from "react-icons/io";
-
+import Cookies from "js-cookie"
 type props = {
     componentType: string;
-    onAdd: (data: {
-        username: string;
-        backgroundColor: string;
-        innerColor: string;
-        borderStyle: string;
-        componentType: string;
-    }) => void
+    editingProfile: Profile;
+    component: ProfileComponent;
 }
 const borderStyles = ["Square", "Soft Edges"];
 const baseUrls: Record<string, string> = {
-  instagram: "https://instagram.com/",
-  twitter: "https://twitter.com/",
-  linkedin: "https://linkedin.com/in/",
-  youtube: "https://youtube.com/",
-  tiktok: "https://tiktok.com/@",
-  pinterest: "https://pinterest.com/",
-  snapchat: "https://snapchat.com/",
-  reddit: "https://reddit.com/user/",
-  github: "https://github.com/",
-  soundcloud: "https://soundcloud.com/",
-  behance: "https://behance.net/",
-  discord: "https://discord.com/users/",
-  medium: "https://medium.com/@",
-  twitch: "https://twitch.tv/",
-  tumblr: "https://tumblr.com/blog/",
-  skype: "https://skype.com/",
-  whatsapp: "https://wa.me/",
-  spotify: "https://open.spotify.com/user/",
-  telegram: "https://telegram.com/",
-  steam: "https://steamcommunity.com/id/",
-  "spotify-artist": "https://open.spotify.com/artist/",
+    instagram: "https://instagram.com/",
+    twitter: "https://twitter.com/",
+    linkedin: "https://linkedin.com/in/",
+    youtube: "https://youtube.com/",
+    tiktok: "https://tiktok.com/@",
+    pinterest: "https://pinterest.com/",
+    snapchat: "https://snapchat.com/",
+    reddit: "https://reddit.com/user/",
+    github: "https://github.com/",
+    soundcloud: "https://soundcloud.com/",
+    behance: "https://behance.net/",
+    discord: "https://discord.com/users/",
+    medium: "https://medium.com/@",
+    twitch: "https://twitch.tv/",
+    tumblr: "https://tumblr.com/blog/",
+    skype: "https://skype.com/",
+    whatsapp: "https://wa.me/",
+    spotify: "https://open.spotify.com/user/",
+    telegram: "https://telegram.com/",
+    steam: "https://steamcommunity.com/id/",
+    "spotify-artist": "https://open.spotify.com/artist/",
 };
 
 
-export default function SocialMediaComponent({ onAdd, componentType }: props) {
+export default function SocialMediaComponent({ componentType, editingProfile, component }: props) {
     const [username, setUsername] = useState("");
     const [backgroundColor, setBackgroundColor] = useState("#0f3057");
     const [innerColor, setInnerColor] = useState("#ffd60a");
     const [borderStyle, setBorderStyle] = useState(borderStyles[1]);
 
-    function handleSubmit() {
-        onAdd({ username, backgroundColor, innerColor, borderStyle, componentType });
+    async function updateComponent() {
+        const email = Cookies.get("user_email");
+        const password = Cookies.get("user_password");
+        if (!email || !password) return;
+
+        try {
+            const res = await fetch("/api/profile/components/updateComponent", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    password,
+                    profileId: editingProfile._id,
+                    type: "social",
+                    componentId: component.id,
+                    updateData: {
+                        backgroundColor,
+                        innerColor,
+                        text: username,
+                        borderStyle: borderStyle
+                    }
+                })
+            })
+
+            const data = await res.json();
+            if (!res.ok) {
+                return { status: "error", message: data.error || "Creation failed" };
+            }
+            else {
+                if (data.status === "error") return;
+                alert("Component updated successfully!")
+                window.location.href = "/dashboard/edit-profile/" + editingProfile.profileUrl
+            }
+        }
+        catch (e) {
+            return { status: "error", message: "An error occurred during fetch: " + e };
+        }
     }
 
+
+    useEffect(() => {
+        setUsername(component.username);
+        setBorderStyle(component.borderStyle);
+        setBackgroundColor(component.backgroundColor);
+        setInnerColor(component.innerColor)
+    }, []);
     return (
         <div className="flex flex-col gap-6 w-md max-w-md mx-auto">
 
@@ -92,7 +131,7 @@ export default function SocialMediaComponent({ onAdd, componentType }: props) {
             </div>
 
             <button
-                onClick={handleSubmit}
+                onClick={updateComponent}
                 className="transition duration-200 bg-blue-600 text-white p-3 rounded-lg cursor-pointer hover:bg-blue-700"
             >
                 Update

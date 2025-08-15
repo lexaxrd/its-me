@@ -1,5 +1,5 @@
 "use client"
-import { Profile, User } from "@/pages/api/models/user";
+import { Profile, ProfileComponent, User } from "@/pages/api/models/user";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie"
@@ -14,6 +14,8 @@ import SocialMediaComponent from "./components/SocialMediaComponent";
 import TextComponent from "./components/TextComponent";
 import SeparatorComponent from "./components/SeparatorComponent";
 import SpotifySongComponent from "./components/SpotifySongComponent";
+import ProfileNameComponent from "./components/ProfileNameComponent";
+import ProfilePhotoComponent from "./components/ProfilePhotoComponent";
 
 const components = [
     {
@@ -203,6 +205,8 @@ function findComponentAndType(profiles: Profile[], profileId: string, componentI
 export default function Component() {
     const params = useParams();
     const [user, setUser] = useState<User | null>(null);
+    const [component, setComponent] = useState<ProfileComponent | null>(null);
+    const [displayComponents, setDisplayComponents] = useState<any>(null);
     const componentId = params?.componentId as string | undefined;
     const profileUrl = params?.profileUrl as string | undefined;
     const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
@@ -210,6 +214,7 @@ export default function Component() {
     const [componentName, setComponentName] = useState("");
 
     async function handleFetchProfiles() {
+
         const email = Cookies.get("user_email");
         const password = Cookies.get("user_password");
         if (!email || !password) return;
@@ -223,7 +228,8 @@ export default function Component() {
 
             const data = await res.json();
             if (!res.ok) {
-                return { status: "error", message: data.error || "Creation failed" };
+
+                return { status: "error", message: data.error || "Fetch failed" };
             }
             else {
                 if (data.status === "error") return;
@@ -235,19 +241,67 @@ export default function Component() {
         }
 
     }
+    async function handleFetchComponent() {
 
-    /* useEffect(() => {
-         if (!profileUrl || profiles.length === 0) return;
-         const profile = profiles.find(p => p.profileUrl === profileUrl) || null;
-         setEditingProfile(profile);
- 
-         /*if (!allComponents.some(alLComp => componentName?.includes(alLComp))) {
-             window.location.href = "/dashboard/add-component/" + profileUrl
-         }
-     }, [profileUrl, profiles]);*/
+
+        const email = Cookies.get("user_email");
+        const password = Cookies.get("user_password");
+        if (!email || !password) return;
+
+        try {
+            const res = await fetch("/api/profile/components/fetchComponent", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password, profileUrl, componentId })
+            })
+
+            const data = await res.json();
+            if (!res.ok) {
+                return { status: "error", message: data.error || "Fetch failed" };
+            }
+            else {
+                if (data.status === "error") return;
+                setComponent(data.component);
+            }
+        }
+        catch (e) {
+            return { status: "error", message: "An error occurred during fetch: " + e };
+        }
+
+    }
+    async function handleFetchDisplayComponents() {
+
+
+        const email = Cookies.get("user_email");
+        const password = Cookies.get("user_password");
+        if (!email || !password) return;
+
+        try {
+            const res = await fetch("/api/profile/components/fetchDisplayComponents", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password, profileId: editingProfile?._id })
+            })
+
+            const data = await res.json();
+            if (!res.ok) {
+                return { status: "error", message: data.error || "Fetch failed" };
+            }
+            else {
+                if (data.status === "error") return;
+                setDisplayComponents({ displayName: data.displayName, profilePhoto: data.profilePhoto });
+            }
+        }
+        catch (e) {
+            return { status: "error", message: "An error occurred during fetch: " + e };
+        }
+
+    }
 
     useEffect(() => {
         handleFetchProfiles();
+
+
 
         const newUser: User = {
             username: Cookies.get("username") ?? "",
@@ -260,75 +314,107 @@ export default function Component() {
     }, []);
 
     useEffect(() => {
+        if (componentId == "display-name" || componentId == "profile-photo" && editingProfile) {
+            handleFetchDisplayComponents();
+        }
+        else if (editingProfile) {
+            handleFetchComponent();
+
+        }
+    }, [editingProfile]);
+
+    useEffect(() => {
         if (!profiles.length || !profileUrl || !componentId) return;
 
         const profile = profiles.find(p => p.profileUrl === profileUrl);
         if (!profile) return;
 
+        setEditingProfile(profile);
+
+        if (componentId == "display-name") {
+            setComponentName("display-name")
+            return
+        } else if (componentId == "profile-photo") {
+            setComponentName("profile-photo");
+            return
+        }
+
         const result = findComponentAndType(profiles, profile._id.toString(), componentId);
 
+
         if (result) {
-            setEditingProfile(profile);
-            setComponentName(result.type); // burada componentName state'ini tutacaksın
+            setComponentName(result.type);
         } else {
             console.warn("Component not found");
         }
     }, [profiles, profileUrl, componentId]);
 
+    useEffect(() => {
+        if (componentId == "display-name" && editingProfile) {
+            setComponent({
+                text: displayComponents.displayName.text,
+                backgroundColor: displayComponents.displayName.backgroundColor,
+                innerColor: displayComponents.displayName.innerColor,
+                fontType: displayComponents.displayName.fontType,
+                fontSize: displayComponents.displayName.fontSize,
+                borderStyle: displayComponents.displayName.borderStyle,
+                enabled: displayComponents.displayName.enabled,
 
-    type componentParams = {
-        backgroundColor?: string;
-        innerColor?: string;
-        borderStyle?: string;
-        username?: string;
-        text?: string;
-        fontType?: string;
-        fontSize?: number;
-        space?: string
-    };
+            })
+        }
+        else if (componentId == "profile-photo" && editingProfile) {
+            setComponent({
+                photo: displayComponents.profilePhoto.photo,
+                photoSize: displayComponents.profilePhoto.photoSize,
+                borderStyle: displayComponents.profilePhoto.borderStyle,
+                enabled: displayComponents.profilePhoto.enabled,
 
-    async function getComponent({ backgroundColor, innerColor, borderStyle, username, text, fontType, fontSize, space }: componentParams) {
-
-    }
+            })
+        }
+    }, [displayComponents])
 
     return (
         <div>
             <Navbar />
             <div className="container flex flex-col gap-20 my-24">
-                <div className="flex flex-col items-center gap-7">
+                <div className="flex flex-col max-sm:text-[0.9rem] text-xl items-center gap-7">
                     <img src="/itsmelogo.png" alt="" width={100} />
                     <div className="flex items-center gap-2">
-                        <a href="/dashboard" className="text-xl"> Dashboard {'>'} My Profiles {'>'} </a>
-                        <a href="" className="text-xl flex items-center justify-center gap-2"><span className="font-semibold text-xl">{editingProfile?.profileName}</span> Profile</a>
+                        <a href="/dashboard" className=""> Dashboard {'>'} My Profiles {'>'} </a>
+                        <a href={`/dashboard/edit-profile/${editingProfile?.profileUrl}`} className=" flex items-center justify-center gap-2"><span className="font-semibold">{editingProfile?.profileName}</span> Profile</a>
                     </div>
                 </div>
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-10 px-4">
                     <div className="flex items-center justify-center gap-2">
                         <span className="text-4xl"> {getIconByRedirect(componentName!!)} </span>
 
-                        <h1 className="text-2xl text-center"> Adding a element called <span className="font-bold">{capitalizeAndReplaceDash(componentName!!)}</span> </h1>
+                        <h1 className="text-2xl text-center"> Editing a element called <span className="font-bold">{capitalizeAndReplaceDash(componentName!!)}</span> </h1>
                     </div>
                     <div className="flex items-center justify-center">
-                        {componentName == "separator" && (
-                            <SeparatorComponent componentType={componentName!!} onAdd={data => {
-                                
-                            }} />
+                        {component && editingProfile && (
+                            <>
+                                {componentName == "display-name" && (
+                                    <ProfileNameComponent componentType={componentName!!} editingProfile={editingProfile} component={component} />
+                                )}
+                                {componentName == "profile-photo" && (
+                                    <ProfilePhotoComponent componentType={componentName!!} editingProfile={editingProfile} component={component} />
+                                )}
+                                {componentName == "separator" && (
+                                    <SeparatorComponent componentType={componentName!!} editingProfile={editingProfile} component={component} />
+                                )}
+                                {componentName == "spotify-song" && (
+                                    <SpotifySongComponent componentType={componentName!!} editingProfile={editingProfile} component={component} />
+                                )}
+                                {textComponents.includes(componentName) && (
+                                    <TextComponent componentType={componentName!!} editingProfile={editingProfile} component={component} />
+                                )}
+
+                                {socialMediaComponents.some(socialComp => componentName?.trim() === socialComp) && (
+                                    <SocialMediaComponent componentType={componentName!!} editingProfile={editingProfile} component={component} />
+                                )}
+                            </>
                         )}
-                        {componentName == "spotify-song" && (
-                            <SpotifySongComponent componentType={componentName!!} onAdd={data => {
-                               
-                            }} />
-                        )}
-                        {textComponents.some(textComp => componentName?.includes(textComp)) && (
-                            <TextComponent componentType={componentName!!} onAdd={data => {
-                                
-                            }} />
-                        )}
-                        {socialMediaComponents.some(socialComp => componentName?.trim() === socialComp) && (
-                            <SocialMediaComponent componentType={componentName!!} onAdd={data => {
-                                
-                            }} />
-                        )}
+
                     </div>
 
 

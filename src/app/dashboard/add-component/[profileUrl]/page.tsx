@@ -207,7 +207,7 @@ export default function AddComponent() {
     return (
         <>
             <Navbar />
-            <div className="container flex flex-col gap-20 my-24">
+            <div className="container px-4 flex flex-col gap-20 my-24">
                 <div className="flex flex-col items-center gap-7">
                     <img src="/itsmelogo.png" alt="" width={100} />
                     <div className="flex items-center gap-2">
@@ -218,7 +218,7 @@ export default function AddComponent() {
                 <div className="flex flex-col gap-20">
                     <h1 className="text-2xl font-semibold text-center"> All Components </h1>
 
-                    <div className="grid grid-cols-6 gap-6">
+                    <div className="grid grid-cols-6 max-sm:grid-cols-1 max-md:grid-cols-2 max-lg:grid-cols-3 max-xl:grid-cols-4 gap-6">
                         {components.map((component, index) => (
                             <a href={`/dashboard/component/${component.redirect}/${editingProfile?.profileUrl}`} key={index} className="transition duration-300 hover:scale-105 cursor-pointer flex flex-col gap-2 items-center p-4 rounded-3xl shadow-[0_0_15px_0px_rgba(0,0,0,0.13)]">
                                 <div className="bg-gray-800 rounded-full p-3 w-max">

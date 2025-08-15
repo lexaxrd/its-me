@@ -11,6 +11,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (!email || !password || !name || !url) {
             return res.status(400).json({ error: "All fields are required." });
         }
+
+        const urlRegex = /^[a-zA-Z0-9-_]+$/;
+        if (!urlRegex.test(url)) {
+            return res.status(400).json({ error: "Profile URL can only contain letters, numbers, '-' and '_'. No spaces or special characters allowed." });
+        }
         try {
             await connectDB();
 
@@ -48,13 +53,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     innerColor: "#ffd60a",
                     fontType: "var(--font-lato)",
                     fontSize: 15,
-                    borderStyle: "square"
+                    borderStyle: "Square"
                 },
                 profilePhoto: {
                     enabled: true,
                     photo: "",
                     photoSize: "75px",
-                    borderStyle: "round"
+                    borderStyle: "Round"
                 }
             };
 

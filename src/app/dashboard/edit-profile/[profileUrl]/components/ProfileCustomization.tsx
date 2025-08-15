@@ -275,7 +275,7 @@ export default function ProfileCustomization({ editingProfile }: params) {
 
         try {
             const res = await fetch("/api/profile/components/updateDisplayComponents", {
-                method: "PATCH",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     email,
@@ -324,8 +324,8 @@ export default function ProfileCustomization({ editingProfile }: params) {
 
                         </div>
                         <div className="flex gap-4 items-center">
-                            <Checkbox value={editingProfile.profilePhoto.enabled} onChanged={(data) => updateDisplayComponentsEnabled(data.checked, "profilePhoto")} />
-                            <a href={`/dashboard/edit-component/profile-photo/${editingProfile.profileUrl}`} className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition duration-500 text-3xl">
+                            {/*<Checkbox value={editingProfile.profilePhoto.enabled} onChanged={(data) => updateDisplayComponentsEnabled(data.checked, "profilePhoto")} />*/}
+                            <a href={`/dashboard/edit-component/${editingProfile.profileUrl}/profile-photo`} className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition duration-500 text-3xl">
                                 <MdEdit />
                             </a>
 
@@ -342,8 +342,9 @@ export default function ProfileCustomization({ editingProfile }: params) {
 
                         </div>
                         <div className="flex gap-4 items-center">
-                            <Checkbox value={editingProfile.displayName.enabled} onChanged={(data) => updateDisplayComponentsEnabled(data.checked, "displayName")} />
-                            <a href={`/dashboard/edit-component/display-name/${editingProfile.profileUrl}`} className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition duration-500 text-3xl">
+                            {/*                            <Checkbox value={editingProfile.displayName.enabled} onChanged={(data) => updateDisplayComponentsEnabled(data.checked, "displayName")} />
+ */}
+                            <a href={`/dashboard/edit-component/${editingProfile.profileUrl}/display-name`} className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition duration-500 text-3xl">
                                 <MdEdit />
                             </a>
 

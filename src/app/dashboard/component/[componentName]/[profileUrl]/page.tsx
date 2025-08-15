@@ -286,15 +286,15 @@ export default function Component() {
         <div>
             <Navbar />
             <div className="container flex flex-col gap-20 my-24">
-                <div className="flex flex-col items-center gap-7">
+                <div className="flex flex-col max-sm:text-[0.9rem] text-xl items-center gap-7">
                     <img src="/itsmelogo.png" alt="" width={100} />
                     <div className="flex items-center gap-2">
-                        <a href="/dashboard" className="text-xl"> Dashboard {'>'} My Profiles {'>'} </a>
-                        <a href="" className="text-xl flex items-center justify-center gap-2"><span className="font-semibold text-xl">{editingProfile?.profileName}</span> Profile</a>
+                        <a href="/dashboard" className=""> Dashboard {'>'} My Profiles {'>'} </a>
+                        <a href={`/dashboard/edit-profile/${editingProfile?.profileUrl}`} className=" flex items-center justify-center gap-2"><span className="font-semibold ">{editingProfile?.profileName}</span> Profile</a>
                     </div>
                 </div>
-                <div className="flex flex-col gap-5">
-                    <div className="flex items-center justify-center gap-2">
+                <div className="flex flex-col gap-10 px-4">
+                    <div className="flex max-sm:flex-col items-center justify-center gap-2">
                         <span className="text-4xl"> {getIconByRedirect(componentName!!)} </span>
 
                         <h1 className="text-2xl text-center"> Adding a element called <span className="font-bold">{capitalizeAndReplaceDash(componentName!!)}</span> </h1>

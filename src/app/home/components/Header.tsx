@@ -1,9 +1,9 @@
 export default function Header() {
     return (
-        <div className="flex justify-between items-center container">
-            <div className="flex flex-col gap-8">
-                <h1 className="font-black text-5xl leading-tight">LET ITS.ME HELP <br />
-                    OTHERS DISCOVER WHO <br />
+        <div className="flex max-lg:justify-center max-lg:text-center justify-between items-center container">
+            <div className="flex max-lg:items-center flex-col gap-8">
+                <h1 className="font-black text-5xl leading-tight w-[400px]">LET ITS.ME HELP
+                    OTHERS DISCOVER WHO 
                     YOU ARE
                 </h1>
                 <p className="font-medium text-xl"> ITS.ME is a platform where you can easily introduce to <br />
@@ -12,7 +12,7 @@ export default function Header() {
                     Create your profile
                 </button>
             </div>
-            <div>
+            <div className="max-lg:hidden">
                 <img src="/people.png" alt="Header Image" width={500} className="" />
             </div>
         </div>

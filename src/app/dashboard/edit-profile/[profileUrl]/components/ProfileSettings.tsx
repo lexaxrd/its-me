@@ -104,7 +104,7 @@ export default function ProfileSettings({ user, editingProfile }: params) {
     }, [])
     return (
         <>
-            <div className="bg-[#FFFFFF] shadow-[0_0_30px_0px_rgba(0,0,0,0.15)] border border-[rgba(0,0,0,0.14)] p-8 w-[550px] rounded-lg flex flex-col gap-6">
+            <div className="bg-[#FFFFFF] shadow-[0_0_30px_0px_rgba(0,0,0,0.15)] border border-[rgba(0,0,0,0.14)] p-8 sm:w-[550px] w-full rounded-lg flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                     <div className="flex gap-1 items-center text-2xl">
                         <FaLink />
@@ -115,7 +115,7 @@ export default function ProfileSettings({ user, editingProfile }: params) {
                             <p> {origin}/ </p>
                         </div>
                         <div className="text-black/50 bg-gray-200 border border-[rgba(0,0,0,0.14)] border-l-0 p-2 rounded-lg rounded-l-none w-full">
-                            <p> {editingProfile?.profileUrl} </p>
+                            <p> {editingProfile?.profileName} </p>
                         </div>
                     </div>
                 </div>
@@ -124,7 +124,7 @@ export default function ProfileSettings({ user, editingProfile }: params) {
                         <MdOutlineInsertPhoto />
                         <p> Stock Backgrounds </p>
                     </div>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid sm:grid-cols-4 grid-cols-2 gap-4">
                         {backgrounds.map((bg, i) => (
                             <div
                                 key={i}
@@ -146,7 +146,6 @@ export default function ProfileSettings({ user, editingProfile }: params) {
                         <MdOutlineAddPhotoAlternate />
                         <p> Background Photo </p>
                     </div>
-                    <p>{selectedImg}</p>
                     <div
                         className="flex justify-center items-center w-full h-20 border border-black/20 rounded-lg cursor-pointer"
                         onClick={handleSelectImageClick}

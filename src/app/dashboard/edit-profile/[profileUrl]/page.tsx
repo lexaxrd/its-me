@@ -51,20 +51,20 @@ export default function EditProfile() {
         setEditingProfile(profile);
     }, [profileUrl, profiles]);
 
- useEffect(() => {
-  if (!profileUrl || profiles.length === 0 || !user) {
-    setEditingProfile(null);
-    return;
-  }
+    useEffect(() => {
+        if (!profileUrl || profiles.length === 0 || !user) {
+            setEditingProfile(null);
+            return;
+        }
 
-  const profile = profiles.find(p => p.profileUrl === profileUrl) || null;
+        const profile = profiles.find(p => p.profileUrl === profileUrl) || null;
 
-  if (profile && profile.profileUrl === profileUrl) {
-    setEditingProfile(profile);
-  } else {
-    window.location.href = "/dashboard"
-  }
-}, [profileUrl, profiles, user]);
+        if (profile && profile.profileUrl === profileUrl) {
+            setEditingProfile(profile);
+        } else {
+            window.location.href = "/dashboard"
+        }
+    }, [profileUrl, profiles, user]);
 
 
     useEffect(() => {
@@ -88,12 +88,12 @@ export default function EditProfile() {
             <div className="container flex flex-col gap-20 justify-center items-center">
                 <div className="flex flex-col items-center gap-7">
                     <img src="/itsmelogo.png" alt="" width={100} />
-                    <div className="flex items-center gap-2">
-                        <a href="/dashboard" className="text-xl"> Dashboard {'>'} My Profiles {'>'} </a>
-                        <a href="" className="text-xl flex items-center justify-center gap-2"><span className="font-semibold text-xl">{editingProfile?.profileName}</span> Profile</a>
+                    <div className="flex sm:text-xl text-[1rem] items-center gap-2">
+                        <a href="/dashboard" className=""> Dashboard {'>'} My Profiles  </a>
+                        <a href="" className=" flex items-center justify-center gap-2"><span className="font-semibold">{'>'} {editingProfile?.profileName}</span> Profile</a>
                     </div>
                 </div>
-                <div className="flex flex-col gap-4 w-full">
+                <div className="flex flex-col gap-4 px-4 w-full">
                     <div className="flex items-center justify-center gap-22 w-full">
                         <button onClick={() => setEditPage("settings")} className={`cursor-pointer transition duration-300 text-2xl ${editPage == "settings" && "font-bold "}`}> Settings </button>
                         <button onClick={() => setEditPage("customization")} className={`cursor-pointer transition duration-300 text-2xl ${editPage == "customization" && " font-bold"}`}> Customization </button>
