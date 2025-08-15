@@ -6,7 +6,7 @@ import path from "path";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "POST") {
-        const { email, password, profileId, stockBackground, backgroundImg } = req.body;
+        const { email, password, profileId, stockBackground, backgroundImg, increaseViews, increaseClicks } = req.body;
 
         if (!email || !password) {
             return res.status(400).json({ error: "E-mail and Password are required." });
@@ -27,14 +27,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(404).json({ error: "Profile not found." });
             }
 
-            if (stockBackground) {
-                user.profiles[profileIndex].selectedStockBackground = stockBackground;
+            if (typeof user.profiles[profileIndex].views !== "number") {
+                user.profiles[profileIndex].views = 0;
             }
-            else {
-                user.profiles[profileIndex].selectedStockBackground = "";
+            if (typeof user.profiles[profileIndex].linkClicks !== "number") {
+                user.profiles[profileIndex].linkClicks = 0;
             }
 
-             if (backgroundImg) {
+            if (increaseViews) {
+                user.profiles[profileIndex].views += 1;
+            }
+            if (increaseClicks) {
+                user.profiles[profileIndex].linkClicks += 1;
+            }
+
+            if (stockBackground) {
+                user.profiles[profileIndex].backgroundImg = "";
+                user.profiles[profileIndex].selectedStockBackground = stockBackground;
+            }
+
+            if (backgroundImg) {
                 const backgroundDir = path.join(process.cwd(), 'public', 'backgroundImages');
 
                 const files = fs.readdirSync(backgroundDir);
@@ -51,10 +63,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         }
                     }
                 }
+                user.profiles[profileIndex].selectedStockBackground = "";
 
                 user.profiles[profileIndex].backgroundImg = backgroundImg;
-            } else {
-                user.profiles[profileIndex].backgroundImg = "";
             }
             user.markModified("profiles");
 

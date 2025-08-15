@@ -6,7 +6,7 @@ import { FaBehance, FaDiscord, FaGithub, FaInstagram, FaLink, FaLinkedin, FaPint
 import { TbSeparator } from "react-icons/tb";
 import { IoText } from "react-icons/io5";
 import { MdOutlineTitle } from "react-icons/md";
-
+import Cookies from "js-cookie"
 const components = [
     {
         title: "Link",
@@ -183,6 +183,69 @@ export default function ProfilePage() {
     const profileUrl = params?.profileUrl as string | undefined;
     const [profile, setProfile] = useState<Profile | null>(null);
 
+    async function increaseProfileViews(profileId: string) {
+        const email = Cookies.get("user_email");
+        const password = Cookies.get("user_password");
+
+        if (!email || !password) {
+            console.warn("Email veya password cookie’de bulunamadı, views artırma atlanıyor.");
+            return;
+        }
+
+        try {
+            const res = await fetch("/api/profile/updateProfile", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    password,
+                    profileId,
+                    increaseViews: true
+                })
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+                console.error("Views artırma başarısız:", data.error);
+            } else {
+                console.log("Views artırıldı:", data);
+            }
+        } catch (err) {
+            console.error("Views artırma sırasında hata:", err);
+        }
+    }
+    async function increaseProfileLinkClicks(profileId: string) {
+        const email = Cookies.get("user_email");
+        const password = Cookies.get("user_password");
+
+        if (!email || !password) {
+            console.warn("Email veya password cookie’de bulunamadı, views artırma atlanıyor.");
+            return;
+        }
+
+        try {
+            const res = await fetch("/api/profile/updateProfile", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    password,
+                    profileId,
+                    increaseClicks: true
+                })
+            });
+
+            const data = await res.json();
+            if (!res.ok) {
+                console.error("Clicks artırma başarısız:", data.error);
+            } else {
+                console.log("Clicks artırıldı:", data);
+            }
+        } catch (err) {
+            console.error("Clicks artırma sırasında hata:", err);
+        }
+    }
+
     async function fetchProfile() {
         try {
             const res = await fetch("/api/profile/fetchProfile", {
@@ -202,6 +265,7 @@ export default function ProfilePage() {
             else {
                 if (data.status === "error") return;
                 setProfile(data.profile);
+                increaseProfileViews(data.profile._id);
             }
         }
         catch (e) {
@@ -214,6 +278,8 @@ export default function ProfilePage() {
     useEffect(() => {
         fetchProfile();
     }, []);
+
+
     return (
 
         <div
@@ -349,6 +415,7 @@ export default function ProfilePage() {
                             .filter(comp => comp.socialMedias?.length)
                             .flatMap(comp => comp.socialMedias?.map(sm => (
                                 <a
+                                    onClick={() => increaseProfileLinkClicks(profile._id)}
                                     key={sm.id}
                                     href={sm.username ? baseUrls[sm.type] + sm.username : "#"}
                                     className={`flex items-center gap-2 p-3 mt-3 ${sm.borderStyle === "Soft Edges" ? "rounded-lg" : "rounded-none"}`}

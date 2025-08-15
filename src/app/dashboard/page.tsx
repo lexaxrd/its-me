@@ -242,7 +242,7 @@ export default function Dashboard() {
                                         <a href={`/dashboard/edit-profile/${profile.profileUrl}`} className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition duration-500">
                                             <MdEdit />
                                         </a>
-                                        <a className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition duration-500">
+                                        <a href={`/${profile.profileUrl}`} className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition duration-500">
                                             <FaLink />
                                         </a>
                                         <a onClick={() => handleDeleteProfile(profile._id)} className="text-[#4E4E4E] hover:text-blue-600 cursor-pointer transition ">
